@@ -441,3 +441,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+## CUSTOM GITIGNOREs
+Bin/
+Dependencies\GLFW\lib\
