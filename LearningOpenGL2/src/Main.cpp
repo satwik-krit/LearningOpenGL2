@@ -1,32 +1,31 @@
 #include <iostream>
+#include <cmath>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+//#include "Util.h"
+#include "Shader.h"
+
 int main(void)
 {
-    const char* vertexShaderSource = 
-        "#version 460 core\n"
-        "layout (location = 0) in vec3 pos;\n"
-        "void main() {\n"
-        "gl_Position = vec4(pos.x, pos.y, pos.z, 1.0f); }\0";
-    const char* fragShaderSource = 
-        "#version 460 core\n"
-        "out vec4 FragColor;\n"
-        "void main() {\n"
-        "FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f); }\0";
-
     float vertices[] = { 
-        0.5f,  0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f 
+         //  positions           colors
+         0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+         0.0f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+        -0.5f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
     };
+    // float vertices[] = { 
+    //      0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
+    //      0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+    //     -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
+    //     -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f 
+    // };
 
-    unsigned int indices[] = { 
-        0, 1, 2,
-        0, 3, 2 
-    };
+    // unsigned int indices[] = { 
+    //     0, 1, 2,
+    //     0, 3, 2 
+    // };
 
     if (!glfwInit())
     {
@@ -58,25 +57,9 @@ int main(void)
     }
 
     std::cout << glGetString(GL_VERSION) << '\n';
-
-    unsigned int vertexShader, fragShader;
-
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragShader, 1, &fragShaderSource, NULL);
-    glCompileShader(fragShader);
-
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragShader);
-
+    
+    Shader shader("res/shaders/vert_shader.glsl", "res/shaders/frag_shader.glsl");
+    std::cout << shader.id;
     unsigned int EBO;
     glGenBuffers(1, &EBO);
     
@@ -87,26 +70,33 @@ int main(void)
     glGenBuffers(1, &VBO);
 
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-    glUseProgram(shaderProgram);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // float timeValue, redValue;
+    // int vertexColorLoc = glGetUniformLocation(shaderProgram, "uColor");
+
 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        // timeValue = (float)glfwGetTime();
+        // redValue = sin(timeValue) / 1.1f + 0.5f;
+        // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
+        shader.use();
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
 
