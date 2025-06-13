@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "glad/glad.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "Types.h"
 #include "Shader.h"
@@ -33,16 +35,6 @@ Shader::Shader (std::string_view vert_shader_path, std::string_view frag_shader_
 
 void Shader::use() const
 { glUseProgram(this->id); }
-
-void Shader::set(std::string_view name, bool value) const
-{ glUniform1i(glGetUniformLocation(this->id, name.data()), (int)value); }
-
-void Shader::set(std::string_view name, int value) const
-{ glUniform1i(glGetUniformLocation(this->id, name.data()), value); }
-
-void Shader::set(std::string_view name, float value) const
-{ glUniform1f(glGetUniformLocation(this->id, name.data()), value); }
-
 
 uint Shader::_generate_shader(uint type, const char* shader_source)
 {
@@ -81,7 +73,26 @@ void Shader::_check_shaderprg_link(uint program)
         glGetShaderiv(program, GL_INFO_LOG_LENGTH, &infoLength);
         char* info = new char[infoLength];
         glGetShaderInfoLog(program, infoLength, NULL, info);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION\n" << info << '\n';
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING\n" << info << '\n';
         delete[] info;
     }
 }
+
+void Shader::set(std::string_view name, bool value) const
+{ glUniform1i(glGetUniformLocation(this->id, name.data()), (int)value); }
+
+void Shader::set(std::string_view name, int value) const
+{ glUniform1i(glGetUniformLocation(this->id, name.data()), value); }
+
+void Shader::set(std::string_view name, float value) const
+{ glUniform1f(glGetUniformLocation(this->id, name.data()), value); }
+
+void Shader::set(std::string_view name, const glm::mat2& mat) const
+{ glUniformMatrix4fv(glGetUniformLocation(this->id, name.data()), 1, GL_FALSE, glm::value_ptr(mat)); }
+
+void Shader::set(std::string_view name, const glm::mat3& mat) const
+{ glUniformMatrix4fv(glGetUniformLocation(this->id, name.data()), 1, GL_FALSE, glm::value_ptr(mat)); }
+
+void Shader::set(std::string_view name, const glm::mat4& mat) const
+{ glUniformMatrix4fv(glGetUniformLocation(this->id, name.data()), 1, GL_FALSE, glm::value_ptr(mat)); }
+

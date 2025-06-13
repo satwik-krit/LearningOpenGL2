@@ -4,9 +4,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
-#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 #include "Shader.h"
 
@@ -83,7 +81,8 @@ int main(void)
 
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                     0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -103,7 +102,8 @@ int main(void)
 
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -133,9 +133,11 @@ int main(void)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 
+                          8 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 
+                          8 * sizeof(float), (void *)(6 * sizeof(float)));
     
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // float timeValue, redValue;
@@ -152,9 +154,12 @@ int main(void)
         // timeValue = (float)glfwGetTime();
         // redValue = sin(timeValue) / 1.1f + 0.5f;
         // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
-    shader.use();
-    trans = glm::rotate(trans, glm::radians((float)glfwGetTime()/1000.0f), glm::vec3(0.0f, 1.0f, 1.0f));
-    glUniformMatrix4fv(glGetUniformLocation(shader.id, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+        shader.use();
+        trans = glm::rotate(trans,
+                            glm::radians((float)glfwGetTime()/1000.0f),
+                            glm::vec3(0.0f, 1.0f, 1.0f));
+
+        shader.set("transform", trans);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         glActiveTexture(GL_TEXTURE1);
