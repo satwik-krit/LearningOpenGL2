@@ -444,4 +444,5 @@ FodyWeavers.xsd
 
 ## CUSTOM GITIGNOREs
 Bin/
-Dependencies\GLFW\lib\
+Dependencies/GLFW/lib/
+Dependencies/GLM/include
