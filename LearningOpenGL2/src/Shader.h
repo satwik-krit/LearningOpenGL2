@@ -22,7 +22,7 @@ public:
     void set(std::string_view name, const glm::mat3& mat) const;
     void set(std::string_view name, const glm::mat4& mat) const;
 
-    static uint _generate_shader(uint type, const char* shader_source);
-    static void _check_shader_compile(uint shader);
-    static void _check_shaderprg_link(uint program);
+    static uint generate_shader(uint type, const char* shader_source);
+    static void check_shader_compile(uint shader);
+    static void check_shaderprg_link(uint program);
 };

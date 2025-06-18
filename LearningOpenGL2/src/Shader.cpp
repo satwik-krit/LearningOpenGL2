@@ -16,13 +16,12 @@ Shader::Shader (std::string_view vert_shader_path, std::string_view frag_shader_
     std::string vert_source, frag_source;
 
     vert_source = read_file_contents(vert_shader_path); 
-    vert_shader = Shader::_generate_shader(GL_VERTEX_SHADER, vert_source.c_str());
+    vert_shader = Shader::generate_shader(GL_VERTEX_SHADER, vert_source.c_str());
     
     frag_source = read_file_contents(frag_shader_path); 
-    frag_shader = Shader::_generate_shader(GL_FRAGMENT_SHADER, frag_source.c_str());
+    frag_shader = Shader::generate_shader(GL_FRAGMENT_SHADER, frag_source.c_str());
     
-    this->id = glCreateProgram();
-    const uint& id = this->id;
+    id = glCreateProgram();
     glAttachShader(id, vert_shader);
     glAttachShader(id, frag_shader);
     glLinkProgram(id);
@@ -30,22 +29,22 @@ Shader::Shader (std::string_view vert_shader_path, std::string_view frag_shader_
     glDeleteShader(vert_shader);
     glDeleteShader(frag_shader);
 
-    Shader::_check_shaderprg_link(id);
+    Shader::check_shaderprg_link(id);
 }
 
 void Shader::use() const
-{ glUseProgram(this->id); }
+{ glUseProgram(id); }
 
-uint Shader::_generate_shader(uint type, const char* shader_source)
+uint Shader::generate_shader(uint type, const char* shader_source)
 {
     uint shader = glCreateShader(type);
     glShaderSource(shader, 1, &shader_source, NULL);
     glCompileShader(shader);
-    Shader::_check_shader_compile(shader);
+    Shader::check_shader_compile(shader);
     return shader;
 }
 
-void Shader::_check_shader_compile(uint shader)
+void Shader::check_shader_compile(uint shader)
 {
     int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -62,7 +61,7 @@ void Shader::_check_shader_compile(uint shader)
 }
 
 
-void Shader::_check_shaderprg_link(uint program)
+void Shader::check_shaderprg_link(uint program)
 {
     int success;
     glGetProgramiv(program, GL_COMPILE_STATUS, &success);

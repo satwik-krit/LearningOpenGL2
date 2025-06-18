@@ -1,9 +1,13 @@
 #include <string>
 #include <string_view>
 
+#include "GLFW/glfw3.h"
+
 #include "Types.h"
 
 std::string read_file_contents(std::string_view file_path);
-//uint generate_shader(uint type, const char* shader_source);
-//void check_shader_compile(uint shader);
-//void check_shaderprg_link(uint program);
+
+// void process_input(GLFWwindow *window);
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);

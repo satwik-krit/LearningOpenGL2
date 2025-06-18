@@ -5,8 +5,10 @@
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/glm.hpp"
 
 #include "Shader.h"
+#include "Util.h"
 
 int main(void)
 {
@@ -124,11 +126,24 @@ float vertices[] = {
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 3.0f, -3.0f));
+    // glm::mat4 view = glm::mat4(1.0f);
+     //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
     
-    Shader shader("res/shaders/vert_shader.glsl", "res/shaders/frag_shader.glsl");
+
+    glm::vec3 camera_pos   = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
+    /* Setting the target to pos+front ensures that the camera keeps looking at 
+       the target direction. */
+    glm::mat4 view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+
+    const float radius = 5.0f;
+    float cam_x = sin(glfwGetTime()) * radius;
+    float cam_z = cos(glfwGetTime()) * radius;
+
+    Shader shader {"res/shaders/vert_shader.glsl", "res/shaders/frag_shader.glsl"};
+    std::cout << shader.id << '\n';
 
     int width, height, nr_channels;
     unsigned char* data;
@@ -137,7 +152,7 @@ float vertices[] = {
     uint tex[2];
     glGenTextures(2, &(tex[0]));
     glBindTexture(GL_TEXTURE_2D, tex[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -175,6 +190,8 @@ float vertices[] = {
         std::cout << "Failed to load texture\n"; 
     }
 
+    stbi_image_free(data);
+
     shader.use();
     shader.set("tex1", 0);
     shader.set("tex2", 1);
@@ -211,16 +228,42 @@ float vertices[] = {
 
     // shader.use();
     glEnable(GL_DEPTH_TEST);
+    float current_frame, delta_time = 0.0f, last_frame = 0.0f;
+    float camera_speed;
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(1.0f, 0.5f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // process_input(window);
+        current_frame = (float)glfwGetTime();
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+        camera_speed = (10.0f * delta_time);
 
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        { glfwSetWindowShouldClose(window, GLFW_TRUE); }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        { camera_pos += camera_speed * camera_front; }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        { camera_pos -= camera_speed * camera_front; }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        { camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        { camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
+    }
         // timeValue = (float)glfwGetTime();
         // redValue = sin(timeValue) / 1.1f + 0.5f;
         // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
         shader.use();
-        model = glm::rotate(model, (float)glfwGetTime()/10000.0f * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+
+        // cam_x = sin(glfwGetTime()) * radius;
+        // cam_z = cos(glfwGetTime()) * radius;
+        view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+
         shader.set("projection", projection);
         shader.set("view", view);
         glActiveTexture(GL_TEXTURE0);
@@ -229,7 +272,6 @@ float vertices[] = {
         glBindTexture(GL_TEXTURE_2D, tex[1]);
         glBindVertexArray(VAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        float angle;
         for (size_t i = 0; i < 10; i++)
         {
             model = glm::mat4(1.0f);
