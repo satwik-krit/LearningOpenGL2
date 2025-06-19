@@ -10,7 +10,7 @@
 #include "Shader.h"
 #include "Util.h"
 
-glm::vec3 light_pos(1.2f, 0.0f, 2.0f);
+glm::vec3 light_pos(0.0f, 0.0f, 2.0f);
 
 int main(void)
 {
@@ -119,8 +119,8 @@ int main(void)
     Shader obj_shader {"res/shaders/object.vert", "res/shaders/object.frag"};
     Shader lamp_shader {"res/shaders/lamp.vert", "res/shaders/lamp.frag"};
     obj_shader.use();
-    obj_shader.set("object_color", 1.0f, 0.5f, 0.31f);
-    obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
+    //obj_shader.set("object_color", 1.0f, 0.5f, 0.31f);
+//    obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
 
     int width, height, nr_channels;
     unsigned char* data;
@@ -201,6 +201,7 @@ int main(void)
     glEnable(GL_DEPTH_TEST);
     float current_frame, delta_time = 0.0f, last_frame = 0.0f;
     float camera_speed;
+    glm::vec3 light_color, ambientColor, diffuseColor;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -231,16 +232,32 @@ int main(void)
         // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
         obj_shader.use();
 
-        // cam_x = sin(glfwGetTime()) * radius;
-        // cam_z = cos(glfwGetTime()) * radius;
+      
         view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
 
         obj_shader.set("projection", projection);
         obj_shader.set("view", view);
         obj_shader.set("model", glm::mat4(1.0f));
-        obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
-        obj_shader.set("obj_color", 1.0f, 1.0f, 0.31f);
+ 
+        obj_shader.set("light.ambient", 0.2f, 0.2f, 0.2f);
+        obj_shader.set("light.diffuse", 0.5f, 0.5f, 0.5f);
+        obj_shader.set("light.specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("obj_color", 0.0f, 0.0f, 0.31f);
         obj_shader.set("light_pos", light_pos);
+        obj_shader.set("view_pos", camera_pos);
+        light_color.x = (float)sin(glfwGetTime() * 2.0f);
+        light_color.y = (float)sin(glfwGetTime() * 0.7f);
+        light_color.z = (float)sin(glfwGetTime() * 1.3f);
+
+        diffuseColor = light_color * glm::vec3(0.5f);
+        ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        obj_shader.set("light.ambient", ambientColor);
+        obj_shader.set("light.diffuse", diffuseColor);
+        obj_shader.set("material.ambient", 1.0f, 0.5f, 0.31f);
+        obj_shader.set("material.diffuse", 1.0f, 0.5f, 0.31f);
+        obj_shader.set("material.specular", 0.5f, 0.5f, 0.5f);
+        obj_shader.set("material.shininess", 32.0f);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         glActiveTexture(GL_TEXTURE1);
