@@ -10,66 +10,54 @@
 #include "Shader.h"
 #include "Util.h"
 
+glm::vec3 light_pos(1.2f, 0.0f, 2.0f);
+
 int main(void)
 {
-    // float vertices[] = { 
-    //      //  positions           colors         tex coords
-    //      0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-    //      0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-    //     -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-    //     -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f
-    // };
-    // float vertices[] = { 
-    //      0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-    //      0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-    //     -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
-    //     -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f 
-    // };
-    //
-    //
-float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    };
 
     unsigned int indices[] = { 
         0, 1, 2,
@@ -107,31 +95,17 @@ float vertices[] = {
 
     std::cout << glGetString(GL_VERSION) << '\n';
 
-    glm::vec3 cube_positions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f), 
-        glm::vec3( 2.0f,  5.0f, -15.0f), 
-        glm::vec3(-1.5f, -2.2f, -2.5f),  
-        glm::vec3(-3.8f, -2.0f, -12.3f),  
-        glm::vec3( 2.4f, -0.4f, -3.5f),  
-        glm::vec3(-1.7f,  3.0f, -7.5f),  
-        glm::vec3( 1.3f, -2.0f, -2.5f),  
-        glm::vec3( 1.5f,  2.0f, -2.5f), 
-        glm::vec3( 1.5f,  0.2f, -1.5f), 
-        glm::vec3(-1.3f,  1.0f, -1.5f)  
-    };
-
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
     trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    // glm::mat4 view = glm::mat4(1.0f);
-     //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    model = glm::translate(model, light_pos);
+    model = glm::scale(model, glm::vec3(0.2f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
     
 
-    glm::vec3 camera_pos   = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 camera_pos   = glm::vec3(0.0f, 0.0f, 6.0f);
     glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
     /* Setting the target to pos+front ensures that the camera keeps looking at 
@@ -142,8 +116,11 @@ float vertices[] = {
     float cam_x = sin(glfwGetTime()) * radius;
     float cam_z = cos(glfwGetTime()) * radius;
 
-    Shader shader {"res/shaders/vert_shader.glsl", "res/shaders/frag_shader.glsl"};
-    std::cout << shader.id << '\n';
+    Shader obj_shader {"res/shaders/object.vert", "res/shaders/object.frag"};
+    Shader lamp_shader {"res/shaders/lamp.vert", "res/shaders/lamp.frag"};
+    obj_shader.use();
+    obj_shader.set("object_color", 1.0f, 0.5f, 0.31f);
+    obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
 
     int width, height, nr_channels;
     unsigned char* data;
@@ -192,48 +169,42 @@ float vertices[] = {
 
     stbi_image_free(data);
 
-    shader.use();
-    shader.set("tex1", 0);
-    shader.set("tex2", 1);
+    obj_shader.use();
+    obj_shader.set("tex1", 0);
+    obj_shader.set("tex2", 1);
 
 
     unsigned int EBO;
     glGenBuffers(1, &EBO);
-    
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
 
     unsigned int VBO;
     glGenBuffers(1, &VBO);
+    
+    unsigned int objVAO, lightVAO;
+    glGenVertexArrays(1, &objVAO);
+    glGenVertexArrays(1, &lightVAO);
 
-    glBindVertexArray(VAO);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindVertexArray(lightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-    // glEnableVertexAttribArray(1);
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 
-    //                       8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+    glBindVertexArray(objVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 
-                          5 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    // float timeValue, redValue;
-    // int vertexColorLoc = glGetUniformLocation(shaderProgram, "uColor");
-        //
-
-
-    // shader.use();
     glEnable(GL_DEPTH_TEST);
     float current_frame, delta_time = 0.0f, last_frame = 0.0f;
     float camera_speed;
 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(1.0f, 0.5f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // process_input(window);
         current_frame = (float)glfwGetTime();
@@ -258,30 +229,32 @@ float vertices[] = {
         // timeValue = (float)glfwGetTime();
         // redValue = sin(timeValue) / 1.1f + 0.5f;
         // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
-        shader.use();
+        obj_shader.use();
 
         // cam_x = sin(glfwGetTime()) * radius;
         // cam_z = cos(glfwGetTime()) * radius;
         view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
 
-        shader.set("projection", projection);
-        shader.set("view", view);
+        obj_shader.set("projection", projection);
+        obj_shader.set("view", view);
+        obj_shader.set("model", glm::mat4(1.0f));
+        obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("obj_color", 1.0f, 1.0f, 0.31f);
+        obj_shader.set("light_pos", light_pos);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex[0]);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, tex[1]);
-        glBindVertexArray(VAO);
+        glBindVertexArray(objVAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        for (size_t i = 0; i < 10; i++)
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, cube_positions[i]);
-            model = glm::rotate(model,  glm::radians(50.0f * (float)glfwGetTime()), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.set("model", model);
-            shader.use();
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        lamp_shader.use();
+        lamp_shader.set("projection", projection);
+        lamp_shader.set("view", view);
+        lamp_shader.set("model", model);
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
 
