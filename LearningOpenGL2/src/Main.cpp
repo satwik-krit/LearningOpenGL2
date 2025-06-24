@@ -229,7 +229,7 @@ int main(void)
 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // process_input(window);
         current_frame = (float)glfwGetTime();
@@ -266,7 +266,12 @@ int main(void)
         obj_shader.set("light.ambient", 0.2f, 0.2f, 0.2f);
         obj_shader.set("light.diffuse", 0.5f, 0.5f, 0.5f);
         obj_shader.set("light.specular", 1.0f, 1.0f, 1.0f);
-        obj_shader.set("light.position", light_pos);
+        
+        obj_shader.set("light.position", camera_pos);
+        obj_shader.set("light.direction", camera_front);
+        obj_shader.set("light.cutoff", glm::cos(glm::radians(12.5f)));
+        obj_shader.set("light.outer_cutoff", glm::cos(glm::radians(17.5f)));
+
         obj_shader.set("light.constant", 1.0f);
         obj_shader.set("light.linear", 0.22f);
         obj_shader.set("light.quadratic", 0.2f);

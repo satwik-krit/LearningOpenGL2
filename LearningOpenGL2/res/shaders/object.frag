@@ -10,6 +10,9 @@ struct Material
 struct Light 
 {
     vec3 position;
+    vec3 direction;
+    float cutoff;
+    float outer_cutoff;
 
     vec3 ambient;
     vec3 diffuse;
@@ -32,17 +35,16 @@ uniform vec3 view_pos;
 
 void main() 
 {
-    float distance = length(light.position - frag_pos);
-    float den = 
-       ( light.constant +
-         light.linear * distance +
-         light.quadratic * (distance * distance) );
-    float attenuation = 1.0 / den;
-
+    // Ambient lighting is calculated in both cases.
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, tex_coords));
+    vec3 result = ambient;
+
+    vec3 light_dir = normalize(light.position - frag_pos);
+    float theta     = dot(light_dir, normalize(-light.direction));
+    float epsilon   = light.cutoff - light.outer_cutoff;
+    float intensity = clamp((theta - light.outer_cutoff) / epsilon, 0.0f, 1.0f);
 
     vec3 norm = normalize(normal);
-    vec3 light_dir = normalize(light.position - frag_pos);
     float diff = max(dot(light_dir, norm), 0.0f);
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, tex_coords));
 
@@ -52,7 +54,16 @@ void main()
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0f), material.shininess);
     vec3 specular = light.specular * spec * vec3(texture(material.specular, tex_coords));
 
-    vec3 result = (ambient + diffuse + specular) *  attenuation;
+    // attenuation
+    float distance    = length(light.position - frag_pos);
+    float attenuation = 1.0 / 
+        (light.constant +
+        light.linear * distance +
+        light.quadratic * (distance * distance));    
+
+    // remove attenuation from ambient, as otherwise at large distances the light would be darker inside than outside the spotlight due the ambient term in the else branch
+    result += (diffuse + specular) * attenuation * intensity;
+
     frag_color = vec4(result, 1.0f);
-    // frag_color = vec4(vec3(attenuation, 0.0f, 0.0f), 1.0f);
+    
 }
