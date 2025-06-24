@@ -14,6 +14,12 @@ glm::vec3 light_pos(1.0f, 1.0f, 2.0f);
 
 int main(void)
 {
+    glm::vec3 point_light_positions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
 
     float vertices[] = {
         // positions          // normals           // texture coords
@@ -263,18 +269,56 @@ int main(void)
         obj_shader.set("view", view);
         obj_shader.set("model", glm::mat4(1.0f));
  
-        obj_shader.set("light.ambient", 0.2f, 0.2f, 0.2f);
-        obj_shader.set("light.diffuse", 0.5f, 0.5f, 0.5f);
-        obj_shader.set("light.specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("dir_light.direction", -0.2f, -1.0f, -0.3f);
+        obj_shader.set("dir_light.ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("dir_light.diffuse", 0.4f, 0.4f, 0.4f);
+        obj_shader.set("dir_light.specular", 0.5f, 0.5f, 0.5f);
         
-        obj_shader.set("light.position", camera_pos);
-        obj_shader.set("light.direction", camera_front);
-        obj_shader.set("light.cutoff", glm::cos(glm::radians(12.5f)));
-        obj_shader.set("light.outer_cutoff", glm::cos(glm::radians(17.5f)));
+        // point light 1
+        obj_shader.set("point_lights[0].position", point_light_positions[0]);
+        obj_shader.set("point_lights[0].ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("point_lights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        obj_shader.set("point_lights[0].specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("point_lights[0].constant", 1.0f);
+        obj_shader.set("point_lights[0].linear", 0.09f);
+        obj_shader.set("point_lights[0].quadratic", 0.032f);
+        // point light 2
+        obj_shader.set("point_lights[1].position", point_light_positions[1]);
+        obj_shader.set("point_lights[1].ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("point_lights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        obj_shader.set("point_lights[1].specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("point_lights[1].constant", 1.0f);
+        obj_shader.set("point_lights[1].linear", 0.09f);
+        obj_shader.set("point_lights[1].quadratic", 0.032f);
+        // point light 3
+        obj_shader.set("point_lights[2].position", point_light_positions[2]);
+        obj_shader.set("point_lights[2].ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("point_lights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        obj_shader.set("point_lights[2].specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("point_lights[2].constant", 1.0f);
+        obj_shader.set("point_lights[2].linear", 0.09f);
+        obj_shader.set("point_lights[2].quadratic", 0.032f);
+        // point light 4
+        obj_shader.set("point_lights[3].position", point_light_positions[3]);
+        obj_shader.set("point_lights[3].ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("point_lights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        obj_shader.set("point_lights[3].specular", 1.0f, 1.0f, 1.0f);
+        obj_shader.set("point_lights[3].constant", 1.0f);
+        obj_shader.set("point_lights[3].linear", 0.09f);
+        obj_shader.set("point_lights[3].quadratic", 0.032f);
 
-        obj_shader.set("light.constant", 1.0f);
-        obj_shader.set("light.linear", 0.22f);
-        obj_shader.set("light.quadratic", 0.2f);
+
+        obj_shader.set("spot_light.position", camera_pos);
+        obj_shader.set("spot_light.direction", camera_front);
+        obj_shader.set("spot_light.cutoff", glm::cos(glm::radians(12.5f)));
+        obj_shader.set("spot_light.outer_cutoff", glm::cos(glm::radians(17.5f)));
+        obj_shader.set("spot_light.constant", 1.0f);
+        obj_shader.set("spot_light.linear", 0.09f);
+        obj_shader.set("spot_light.quadratic", 0.032f);
+        obj_shader.set("spot_light.ambient", 0.05f, 0.05f, 0.05f);
+        obj_shader.set("spot_light.diffuse", 0.8f, 0.8f, 0.8f);
+        obj_shader.set("spot_light.specular", 1.0f, 1.0f, 1.0f);
+
         obj_shader.set("view_pos", camera_pos);
 
         // obj_shader.set("material.ambient", 1.0f, 0.5f, 0.31f);
