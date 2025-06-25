@@ -12,6 +12,6 @@ std::string read_file_contents(std::string_view file_path);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-// uint genarate_texture(std::string_view path, 
+// uint generate_texture(std::string_view path, 
 
 //void gl_message_callback;

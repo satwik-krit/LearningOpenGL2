@@ -66,7 +66,6 @@ int main(void)
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
     };
 
-    
     glm::vec3 cube_positions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f),
         glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -78,11 +77,6 @@ int main(void)
         glm::vec3( 1.5f,  2.0f, -2.5f),
         glm::vec3( 1.5f,  0.2f, -1.5f),
         glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
-    unsigned int indices[] = { 
-        0, 1, 2,
-        0, 3, 2 
     };
 
     if (!glfwInit())
@@ -116,7 +110,7 @@ int main(void)
         return -1; 
     }
 
-    // Start using OpenGL's debug context by setting a callback
+    // Enable OpenGL's debug context and set a callback
     glEnable(GL_DEBUG_OUTPUT);
     //glDebugMessageCallback(gl_message_callback, (void*)0);
 
@@ -131,7 +125,6 @@ int main(void)
     model = glm::scale(model, glm::vec3(0.2f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
     
-
     glm::vec3 camera_pos   = glm::vec3(0.0f, 0.0f, 6.0f);
     glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -145,10 +138,7 @@ int main(void)
 
     Shader obj_shader {"res/shaders/object.vert", "res/shaders/object.frag"};
     Shader lamp_shader {"res/shaders/lamp.vert", "res/shaders/lamp.frag"};
-    obj_shader.use();
-    //obj_shader.set("object_color", 1.0f, 0.5f, 0.31f);
-//    obj_shader.set("light_color", 1.0f, 1.0f, 1.0f);
-
+    
     // TODO: Handle loading of textures in a better way.
     int width, height, nr_channels;
     unsigned char* data;
@@ -199,9 +189,6 @@ int main(void)
 
     stbi_image_free(data);
 
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-
     unsigned int VBO;
     glGenBuffers(1, &VBO);
     
@@ -217,7 +204,6 @@ int main(void)
 
     glBindVertexArray(objVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // positions
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -231,7 +217,6 @@ int main(void)
     glEnable(GL_DEPTH_TEST);
     float current_frame, delta_time = 0.0f, last_frame = 0.0f;
     float camera_speed;
-    glm::vec3 light_color, ambientColor, diffuseColor;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -243,27 +228,23 @@ int main(void)
         last_frame = current_frame;
         camera_speed = (10.0f * delta_time);
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         { glfwSetWindowShouldClose(window, GLFW_TRUE); }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         { camera_pos += camera_speed * camera_front; }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         { camera_pos -= camera_speed * camera_front; }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         { camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         { camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
-    }
-        // timeValue = (float)glfwGetTime();
-        // redValue = sin(timeValue) / 1.1f + 0.5f;
-        // glUniform4f(vertexColorLoc, redValue, 0.0f, 0.0f, 1.0f);
-        obj_shader.use();
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        { camera_pos = glm::vec3(0.0f, 0.0f, 3.0f); }
 
       
         view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+
+        obj_shader.use();
 
         obj_shader.set("projection", projection);
         obj_shader.set("view", view);
@@ -282,6 +263,7 @@ int main(void)
         obj_shader.set("point_lights[0].constant", 1.0f);
         obj_shader.set("point_lights[0].linear", 0.09f);
         obj_shader.set("point_lights[0].quadratic", 0.032f);
+        
         // point light 2
         obj_shader.set("point_lights[1].position", point_light_positions[1]);
         obj_shader.set("point_lights[1].ambient", 0.05f, 0.05f, 0.05f);
@@ -290,6 +272,7 @@ int main(void)
         obj_shader.set("point_lights[1].constant", 1.0f);
         obj_shader.set("point_lights[1].linear", 0.09f);
         obj_shader.set("point_lights[1].quadratic", 0.032f);
+
         // point light 3
         obj_shader.set("point_lights[2].position", point_light_positions[2]);
         obj_shader.set("point_lights[2].ambient", 0.05f, 0.05f, 0.05f);
@@ -298,6 +281,7 @@ int main(void)
         obj_shader.set("point_lights[2].constant", 1.0f);
         obj_shader.set("point_lights[2].linear", 0.09f);
         obj_shader.set("point_lights[2].quadratic", 0.032f);
+
         // point light 4
         obj_shader.set("point_lights[3].position", point_light_positions[3]);
         obj_shader.set("point_lights[3].ambient", 0.05f, 0.05f, 0.05f);
@@ -306,7 +290,6 @@ int main(void)
         obj_shader.set("point_lights[3].constant", 1.0f);
         obj_shader.set("point_lights[3].linear", 0.09f);
         obj_shader.set("point_lights[3].quadratic", 0.032f);
-
 
         obj_shader.set("spot_light.position", camera_pos);
         obj_shader.set("spot_light.direction", camera_front);
@@ -321,7 +304,6 @@ int main(void)
 
         obj_shader.set("view_pos", camera_pos);
 
-        // obj_shader.set("material.ambient", 1.0f, 0.5f, 0.31f);
         obj_shader.set("material.shininess", 2.0f);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuse_map);
@@ -339,7 +321,7 @@ int main(void)
             glBindVertexArray(objVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         lamp_shader.use();
         lamp_shader.set("projection", projection);
         lamp_shader.set("view", view);
