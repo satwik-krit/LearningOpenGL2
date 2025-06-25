@@ -21,6 +21,10 @@ public:
     void set(std::string_view name, const glm::mat2& mat) const;
     void set(std::string_view name, const glm::mat3& mat) const;
     void set(std::string_view name, const glm::mat4& mat) const;
+    void set(std::string_view name, const glm::vec3& vec) const;
+    void set(std::string_view name, float x, float y, float z) const;
+    void set(std::string_view name, float x, float y, float z, float w) const;
+    void set(std::string_view name, const glm::vec4& vec) const;
 
     static uint generate_shader(uint type, const char* shader_source);
     static void check_shader_compile(uint shader);
