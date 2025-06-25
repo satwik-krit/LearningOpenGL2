@@ -6,9 +6,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "Types.h"
-#include "Shader.h"
-#include "Util.h"
+#include "Types.hpp"
+#include "Shader.hpp"
+#include "Util.hpp"
 
 Shader::Shader (std::string_view vert_shader_path, std::string_view frag_shader_path)
 {

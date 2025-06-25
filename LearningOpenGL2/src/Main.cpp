@@ -12,8 +12,8 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-#include "Shader.h"
-#include "Util.h"
+#include "Shader.hpp"
+#include "Util.hpp"
 
 glm::vec3 light_pos(1.0f, 1.0f, 2.0f);
 

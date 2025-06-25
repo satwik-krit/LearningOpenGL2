@@ -3,7 +3,7 @@
 
 #include "GLFW/glfw3.h"
 
-#include "Types.h"
+#include "Types.hpp"
 
 std::string read_file_contents(std::string_view file_path);
 

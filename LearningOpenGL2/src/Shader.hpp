@@ -5,7 +5,7 @@
 
 #include "glm/glm.hpp"
 
-#include "Types.h"
+#include "Types.hpp"
 
 class Shader
 {
