@@ -1,15 +1,12 @@
-#include <fstream>
-#include <string>
-#include <iostream>
-#include <string_view>
-#include <sstream>
+#include "Types.hpp"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
+#include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
 
 #include "Util.hpp"
-#include "Types.hpp"
 
 std::string read_file_contents(std::string_view file_path)
 {

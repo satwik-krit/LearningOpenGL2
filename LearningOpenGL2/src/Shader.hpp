@@ -1,11 +1,8 @@
 #pragma once
 
-#include <string>
-#include <string_view>
-
-#include "glm/glm.hpp"
-
 #include "Types.hpp"
+
+#include <glm/glm.hpp>
 
 class Shader
 {

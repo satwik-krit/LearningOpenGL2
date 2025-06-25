@@ -1,16 +1,15 @@
-#include <iostream>
-#include <cmath>
+#include "Types.hpp"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "stb_image.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <stb_image.h>
 
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "Shader.hpp"
 #include "Util.hpp"
