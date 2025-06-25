@@ -4,8 +4,13 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/glm.hpp"
+
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 #include "Shader.h"
 #include "Util.h"
@@ -115,6 +120,8 @@ int main(void)
     //glDebugMessageCallback(gl_message_callback, (void*)0);
 
     std::cout << glGetString(GL_VERSION) << '\n';
+
+    Assimp::Importer importer;
 
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
