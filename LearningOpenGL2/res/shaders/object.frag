@@ -131,6 +131,7 @@ vec3 calc_point_light(PointLight light, vec3 normal, vec3 frag_pos, vec3 view_di
      return (ambient + diffuse + specular) * attenuation;
 }
 
+// We assume that *normal* and *view_dir* is already normalized.
 vec3 calc_spot_light(SpotLight light, vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     vec3 light_dir = normalize(light.position - frag_pos);
