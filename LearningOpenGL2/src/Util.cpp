@@ -1,15 +1,12 @@
-#include <fstream>
-#include <string>
-#include <iostream>
-#include <string_view>
-#include <sstream>
+#include "Types.hpp"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <stb_image.h>
 
-#include "Util.h"
-#include "Types.h"
+#include <glm/glm.hpp>
+
+#include "Util.hpp"
 
 std::string read_file_contents(std::string_view file_path)
 {
@@ -50,6 +47,50 @@ std::string read_file_contents(std::string_view file_path)
         { camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
 }
 */
+
+uint texture_from_file(std::string_view filename, std::string_view directory)
+{
+    std::string path;
+    path += directory;
+    path += '/';
+    path += filename;
+
+
+    stbi_set_flip_vertically_on_load(true);
+    int width, height, nr_channels;
+    unsigned char* data = 
+        stbi_load(path.c_str(), &width, &height, &nr_channels, 0);
+
+    if (!data) {
+        std::cout << "Failed to load texture at path: " << path << '\n';
+        stbi_image_free(data);
+        return -1;
+    }
+
+    GLenum format;
+    switch(nr_channels) { 
+        case 1: format = GL_RED; break;
+        case 3: format = GL_RGB; break;
+        case 4: format = GL_RGBA; break;
+    }
+
+    uint texture_id;
+
+    glGenTextures(1, &texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+                 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
+    return texture_id;
+}
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 
