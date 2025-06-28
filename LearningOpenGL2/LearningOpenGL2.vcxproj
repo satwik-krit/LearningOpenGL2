@@ -103,7 +103,10 @@
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"</Command>
+      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"
+pushd $(SolutionDir)
+call "$(SolutionDir)tags.bat"
+popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +130,10 @@
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"</Command>
+      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"
+pushd $(SolutionDir)
+call "$(SolutionDir)tags.bat"
+popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,7 +153,10 @@
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"</Command>
+      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"
+pushd $(SolutionDir)
+call "$(SolutionDir)tags.bat"
+popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,7 +180,10 @@
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"</Command>
+      <Command>copy /Y "$(SolutionDir)Dependencies\assimp\lib\assimp-vc143-mtd.dll" "$(OutDir)"
+pushd $(SolutionDir)
+call "$(SolutionDir)tags.bat"
+popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

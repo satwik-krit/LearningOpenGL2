@@ -446,6 +446,6 @@ FodyWeavers.xsd
 Bin/
 Dependencies/GLFW/lib/
 Dependencies/GLM/include
-Dependencies/assimp/include
+Dependencies/assimp
 tags
 .obsidian/

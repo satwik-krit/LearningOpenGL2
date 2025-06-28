@@ -15,6 +15,8 @@
 #include "Util.hpp"
 #include "Model.hpp"
 
+glm::vec3 light_pos(0.0f, 0.0f, 0.0f);
+
 int main(void)
 {
     glm::vec3 point_light_positions[] = {
