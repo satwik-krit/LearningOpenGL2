@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "Util.hpp"
+#include "Camera.hpp"
 
 std::string read_file_contents(std::string_view file_path)
 {
@@ -91,11 +92,41 @@ uint texture_from_file(std::string_view filename, std::string_view directory)
     return texture_id;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
 {
+    // See if this is the first time we recieved mouse input,
+    // not handling it properly causes a sudden jump in the camera.
+    static bool first_call = true;
+    static float lastx, lasty;
+    float xpos = static_cast<float>(_xpos);
+    float ypos = static_cast<float>(_ypos);
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
 
+    if (first_call)
+    {
+        lastx = xpos;
+        lasty = ypos;
+        first_call = false;
+        camera->process_mouse_movement(0.0f, 0.0f);
+        return;
+    }
+
+    float xoffset = xpos - lastx;
+    float yoffset = lasty - ypos; // Flip y because y increases as we move up.
+
+    lastx = xpos;
+    lasty = ypos;
+
+    camera->process_mouse_movement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    camera->process_mouse_scroll(xoffset, yoffset);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }

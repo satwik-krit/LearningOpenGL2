@@ -12,6 +12,8 @@ std::string read_file_contents(std::string_view file_path);
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void window_resize_callback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 uint texture_from_file(std::string_view filename, std::string_view directory);
 // uint generate_texture(std::string_view path, 

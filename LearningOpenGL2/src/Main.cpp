@@ -14,6 +14,7 @@
 #include "Shader.hpp"
 #include "Util.hpp"
 #include "Model.hpp"
+#include "Camera.hpp"
 
 glm::vec3 light_pos(0.0f, 0.0f, 0.0f);
 
@@ -48,6 +49,10 @@ int main(void)
     }
 
     glfwMakeContextCurrent(window);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     int version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     if (version == 0) 
@@ -63,9 +68,20 @@ int main(void)
     //
     std::cout << glGetString(GL_VERSION) << '\n';
 
+    Camera camera{ CameraAttributes{
+        Camera::DEFAULT_POSITION,
+        Camera::DEFAULT_WORLD_UP,
+        Camera::DEFAULT_FRONT,
+
+        Camera::DEFAULT_MOVEMENT_SPEED,
+        Camera::DEFAULT_MOUSE_SENSITIVITY,
+        Camera::DEFAULT_ZOOM,
+        Camera::DEFAULT_YAW,
+        Camera::DEFAULT_PITCH,
+    } };
+    glfwSetWindowUserPointer(window, static_cast<void*>(&camera));
     
     Model backpack{ "res/models/backpack/backpack.obj" };
-
     
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
@@ -74,14 +90,11 @@ int main(void)
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, light_pos);
     model = glm::scale(model, glm::vec3(0.2f));
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
+    glm::mat4 projection;
     
-    glm::vec3 camera_pos   = glm::vec3(0.0f, 0.0f, 6.0f);
-    glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
     /* Setting the target to pos+front ensures that the camera keeps looking at 
        the target direction. */
-    glm::mat4 view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+    glm::mat4 view;
 
     Shader shader{ "res/shaders/backpack.vert", "res/shaders/backpack.frag" };
     // Shader lamp_shader{ "res/shaders/backpack.vert", "res/shaders/lamp.frag" };
@@ -102,7 +115,6 @@ int main(void)
 
     glEnable(GL_DEPTH_TEST);
     float current_frame, delta_time = 0.0f, last_frame = 0.0f;
-    float camera_speed;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -112,23 +124,27 @@ int main(void)
         current_frame = (float)glfwGetTime();
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
-        camera_speed = (10.0f * delta_time);
+        camera.movement_speed = (10.0f * delta_time);
 
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         { glfwSetWindowShouldClose(window, GLFW_TRUE); }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        { camera_pos += camera_speed * camera_front; }
+        { camera.position += camera.movement_speed * camera.front; }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        { camera_pos -= camera_speed * camera_front; }
+        { camera.position -= camera.movement_speed * camera.front; }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        { camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
+        { camera.position += glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        { camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
+        { camera.position -= glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        { camera_pos = glm::vec3(0.0f, 0.0f, 3.0f); }
+        { camera.position = glm::vec3(0.0f, 0.0f, 3.0f); }
 
       
-        view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+        view = camera.get_view_matrix();
+        // TODO: Maintain a global screen width and height.
+        int w,h;
+        glfwGetFramebufferSize(window, &w, &h);
+        projection = glm::perspective(glm::radians(camera.fov), (float)(w/h), 0.1f, 100.0f);
 
         shader.use();
 
@@ -178,8 +194,8 @@ int main(void)
         shader.set("point_lights[3].linear", 0.09f);
         shader.set("point_lights[3].quadratic", 0.032f);
 
-        shader.set("spot_light.position", camera_pos);
-        shader.set("spot_light.direction", camera_front);
+        shader.set("spot_light.position", camera.position);
+        shader.set("spot_light.direction", camera.front);
         shader.set("spot_light.cutoff", glm::cos(glm::radians(12.5f)));
         shader.set("spot_light.outer_cutoff", glm::cos(glm::radians(17.5f)));
         shader.set("spot_light.constant", 1.0f);
@@ -189,7 +205,7 @@ int main(void)
         shader.set("spot_light.diffuse", 0.8f, 0.8f, 0.8f);
         shader.set("spot_light.specular", 1.0f, 1.0f, 1.0f);
 
-        shader.set("view_pos", camera_pos);
+        shader.set("view_pos", camera.position);
 
         shader.set("material.shininess", 2.0f);
         shader.set("material.diffuse", 0);

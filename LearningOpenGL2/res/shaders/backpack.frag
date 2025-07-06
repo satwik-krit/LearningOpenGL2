@@ -83,7 +83,8 @@ void main()
     result += calc_spot_light(spot_light, norm, frag_pos, view_dir);
 
     // frag_color = vec4(result, 1.0f);
-    frag_color = mix(texture(texture_diffuse1, tex_coords), vec4(result, 1.0f), 1.0f);
+    // frag_color = mix(texture(texture_diffuse1, tex_coords), vec4(result, 1.0f), 1.0f);
+    frag_color = texture(texture_diffuse1, tex_coords);
 }
 
 // We assume that *normal* and *view_dir* is already normalized.
