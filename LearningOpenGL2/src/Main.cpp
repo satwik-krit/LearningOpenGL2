@@ -15,6 +15,7 @@
 #include "Util.hpp"
 #include "Model.hpp"
 #include "Camera.hpp"
+#include "Input.hpp"
 
 glm::vec3 light_pos(0.0f, 0.0f, 0.0f);
 
@@ -48,10 +49,14 @@ int main(void)
         return -1;
     }
 
+    Input input;
+
     glfwMakeContextCurrent(window);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    // glfwSetMouseButtonCallback(window, input.mouse_button_callback);
+    // glfwSetKeyCallback(window, input.key_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     int version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
