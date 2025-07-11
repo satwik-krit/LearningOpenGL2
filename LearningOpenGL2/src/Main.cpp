@@ -14,8 +14,7 @@
 #include "Shader.hpp"
 #include "Util.hpp"
 #include "Model.hpp"
-#include "Camera.hpp"
-#include "Input.hpp"
+#include "Renderer.hpp"
 
 glm::vec3 light_pos(0.0f, 0.0f, 0.0f);
 
@@ -28,63 +27,20 @@ int main(void)
         glm::vec3( 0.0f,  0.0f, -3.0f)
     };
 
-    if (!glfwInit())
-    {
-        std::cout << "Failed to initialize GLFW.\n";
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, true);
-    // Use OpenGL's debug context
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-
-    GLFWwindow* window = glfwCreateWindow(640, 480, "LearningOpenGL2", NULL, NULL);
-    if (!window)
-    {
-        std::cout << "Failed to create window.\n";
-        glfwTerminate();
-        return -1;
-    }
-
-    Input input;
-
-    glfwMakeContextCurrent(window);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-    // glfwSetMouseButtonCallback(window, input.mouse_button_callback);
-    // glfwSetKeyCallback(window, input.key_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    int version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    if (version == 0) 
-    {
-        std::cout << "Failed to create window.\n";
-        glfwTerminate();
-        return -1; 
-    }
-
-    // Enable OpenGL's debug context and set a callback
-    glEnable(GL_DEBUG_OUTPUT);
-    //glDebugMessageCallback(gl_message_callback, (void*)0);
-    //
-    std::cout << glGetString(GL_VERSION) << '\n';
-
-    Camera camera{ CameraAttributes{
-        Camera::DEFAULT_POSITION,
-        Camera::DEFAULT_WORLD_UP,
-        Camera::DEFAULT_FRONT,
-
-        Camera::DEFAULT_MOVEMENT_SPEED,
-        Camera::DEFAULT_MOUSE_SENSITIVITY,
-        Camera::DEFAULT_ZOOM,
-        Camera::DEFAULT_YAW,
-        Camera::DEFAULT_PITCH,
-    } };
-    glfwSetWindowUserPointer(window, static_cast<void*>(&camera));
+    renderer_config config;
+    config.win_width = 1024;
+    config.win_height = 800;
+    config.win_title = "LearningOpenGL";
+    config.cam_front = glm::vec3(0.0f, 0.0f, 1.0f);
+    config.cam_position = glm::vec3(1.0f, 1.0f, 0.0f);
+    config.cam_world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+    config.cam_mouse_sensitivity = 0.07f;
+    config.cam_movement_speed = 2.5f;
+    Renderer renderer{ config };
+    Camera& camera = renderer.camera;
+    Window& window = renderer.window;
+    renderer.init();
+    glfwSetWindowUserPointer(renderer.window.glfw_window, static_cast<void*>(&renderer));
     
     Model backpack{ "res/models/backpack/backpack.obj" };
     
@@ -121,7 +77,7 @@ int main(void)
     glEnable(GL_DEPTH_TEST);
     float current_frame, delta_time = 0.0f, last_frame = 0.0f;
 
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window.glfw_window))
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -131,24 +87,24 @@ int main(void)
         last_frame = current_frame;
         camera.movement_speed = (10.0f * delta_time);
 
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        { glfwSetWindowShouldClose(window, GLFW_TRUE); }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        { glfwSetWindowShouldClose(window.glfw_window, GLFW_TRUE); }
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_W) == GLFW_PRESS)
         { camera.position += camera.movement_speed * camera.front; }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_S) == GLFW_PRESS)
         { camera.position -= camera.movement_speed * camera.front; }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_D) == GLFW_PRESS)
         { camera.position += glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_A) == GLFW_PRESS)
         { camera.position -= glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        if (glfwGetKey(window.glfw_window, GLFW_KEY_SPACE) == GLFW_PRESS)
         { camera.position = glm::vec3(0.0f, 0.0f, 3.0f); }
 
       
         view = camera.get_view_matrix();
         // TODO: Maintain a global screen width and height.
         int w,h;
-        glfwGetFramebufferSize(window, &w, &h);
+        glfwGetFramebufferSize(window.glfw_window, &w, &h);
         projection = glm::perspective(glm::radians(camera.fov), (float)(w/h), 0.1f, 100.0f);
 
         shader.use();
@@ -218,7 +174,7 @@ int main(void)
 
         backpack.draw(shader);
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window.glfw_window);
         glfwPollEvents();
     }
 

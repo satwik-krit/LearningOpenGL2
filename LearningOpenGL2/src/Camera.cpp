@@ -5,14 +5,17 @@
 
 #include "Camera.hpp"
 
-Camera::Camera(CameraAttributes _attrs) : position(_attrs.position),
-                                          world_up(_attrs.world_up),
-                                          front(_attrs.front),
-                                          movement_speed(_attrs.movement_speed),
-                                          mouse_sensitivity(_attrs.mouse_sensitivity),
-                                          zoom(_attrs.zoom),
-                                          yaw(_attrs.yaw),
-                                          pitch(_attrs.pitch)
+Camera::Camera(glm::vec3 _position, glm::vec3 _world_up, glm::vec3 _front,
+               float _movement_speed, float _mouse_sensitivity)
+    : position(_position),
+    world_up(_world_up),
+    front(_front),
+    movement_speed(_movement_speed),
+    mouse_sensitivity(_mouse_sensitivity),
+    // Set a default value for these, they are going to change every frame anyway.
+    yaw(DEFAULT_YAW),
+    pitch(DEFAULT_PITCH),
+    fov(DEFAULT_FOV)
 {
     update_camera_vectors();
 }
@@ -40,7 +43,7 @@ void Camera::update_camera_vectors()
 void Camera::process_mouse_movement(float xoffset, float yoffset)
 {
     yaw += xoffset * mouse_sensitivity;
-    pitch += xoffset * mouse_sensitivity;
+    pitch += yoffset * mouse_sensitivity;
 
     if (pitch > 89.0f) pitch = 89.0f;
     else if (pitch < -89.0f) pitch = -89.0f;
@@ -50,12 +53,12 @@ void Camera::process_mouse_movement(float xoffset, float yoffset)
 
 void Camera::process_mouse_scroll(double xoffset, double yoffset)
 {
-    fov -= (float)(-yoffset);
+    fov -= (float)(yoffset);
 
     if (fov < 1.0f) fov = 1.0f;
     else if (fov > 45.0f) fov = 45.0f;
 }
-void process_keyboard_input(float xoffset, float yoffset)
+void Camera::process_keyboard_input(float xoffset, float yoffset)
 {
     ;
 }

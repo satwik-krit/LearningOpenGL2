@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "Util.hpp"
-#include "Camera.hpp"
+#include "Renderer.hpp"
 
 std::string read_file_contents(std::string_view file_path)
 {
@@ -30,24 +30,6 @@ std::string read_file_contents(std::string_view file_path)
     std::cout << "ERROR::FILE\n" << "Failed to open file " << file_path << '\n';
     return "";
 }
-
-/*void process_input(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        { glfwSetWindowShouldClose(window, GLFW_TRUE); }
-
-    const float camera_speed = 0.05f;
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        { camera_pos += camera_speed * camera_front; }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        { camera_pos -= camera_speed * camera_front; }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        { camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        { camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed; }
-}
-*/
 
 uint texture_from_file(std::string_view filename, std::string_view directory)
 {
@@ -92,6 +74,26 @@ uint texture_from_file(std::string_view filename, std::string_view directory)
     return texture_id;
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    switch (action)
+    {
+        case GLFW_PRESS: { renderer->input.keys[key] = true; break; }
+        case GLFW_RELEASE: { renderer->input.keys[key] = false; break; }
+    }
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    switch (action)
+    {
+        case GLFW_PRESS: { renderer->input.mouse_buttons[button] = true; break; }
+        case GLFW_RELEASE: { renderer->input.mouse_buttons[button] = false; break; }
+    }
+}
+
 void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
 {
     // See if this is the first time we recieved mouse input,
@@ -100,14 +102,14 @@ void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
     static float lastx, lasty;
     float xpos = static_cast<float>(_xpos);
     float ypos = static_cast<float>(_ypos);
-    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
 
     if (first_call)
     {
         lastx = xpos;
         lasty = ypos;
         first_call = false;
-        camera->process_mouse_movement(0.0f, 0.0f);
+        renderer->camera.process_mouse_movement(0.0f, 0.0f);
         return;
     }
 
@@ -117,16 +119,19 @@ void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
     lastx = xpos;
     lasty = ypos;
 
-    camera->process_mouse_movement(xoffset, yoffset);
+    renderer->camera.process_mouse_movement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-    camera->process_mouse_scroll(xoffset, yoffset);
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    renderer->camera.process_mouse_scroll(xoffset, yoffset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    renderer->window.width = width;
+    renderer->window.height = height;
     glViewport(0, 0, width, height);
 }
