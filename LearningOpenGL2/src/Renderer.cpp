@@ -11,9 +11,19 @@ Renderer::Renderer(renderer_config config)
 	;
 }
 
-
 bool Renderer::init()
 {
     window.init();
     return true;
+}
+
+void Renderer::process_mouse_input()
+{
+    camera.process_mouse_movement(input);
+    camera.process_mouse_scroll(input);
+}
+
+void Renderer::process_keyboard_input()
+{
+    camera.process_keyboard_input(input);
 }

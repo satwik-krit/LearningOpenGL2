@@ -192,7 +192,6 @@ popd</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Main.cpp" />

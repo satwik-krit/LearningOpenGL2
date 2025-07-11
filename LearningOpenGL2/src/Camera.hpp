@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Input.hpp"
+
 static const float DEFAULT_YAW = -90.0f;
 static const float DEFAULT_PITCH = 0;
 static const float DEFAULT_FOV = 45.0f;
@@ -44,9 +46,9 @@ public:
     Camera(glm::vec3 position, glm::vec3 world_up, glm::vec3 front,
            float movement_speed, float mouse_sensitivity);
     glm::mat4 get_view_matrix();
-    void process_mouse_movement(float xoffset, float yoffset);
-    void process_mouse_scroll(double xoffset, double yoffset);
-    void process_keyboard_input(float xoffset, float yoffset);
+    void process_mouse_movement(const Input& input);
+    void process_mouse_scroll(const Input& input);
+    void process_keyboard_input(Input& input);
 
 private:
     void update_camera_vectors();

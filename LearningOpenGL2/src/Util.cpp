@@ -74,6 +74,10 @@ uint texture_from_file(std::string_view filename, std::string_view directory)
     return texture_id;
 }
 
+/* GLFW INPUT CALLBACKS
+ * These only update the *Input* instance of the renderer with user input.
+ * *Input* is then used by every component that relies on user input.
+*/
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
@@ -109,7 +113,11 @@ void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
         lastx = xpos;
         lasty = ypos;
         first_call = false;
-        renderer->camera.process_mouse_movement(0.0f, 0.0f);
+        renderer->input.mouse_x = xpos;
+        renderer->input.mouse_y = ypos;
+
+        renderer->input.x_offset = 0.0f;
+        renderer->input.y_offset = 0.0f;
         return;
     }
 
@@ -119,13 +127,18 @@ void mouse_callback(GLFWwindow* window, double _xpos, double _ypos)
     lastx = xpos;
     lasty = ypos;
 
-    renderer->camera.process_mouse_movement(xoffset, yoffset);
+    renderer->input.mouse_x = xpos;
+    renderer->input.mouse_y = ypos;
+
+    renderer->input.x_offset = xoffset;
+    renderer->input.y_offset = yoffset;
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-    renderer->camera.process_mouse_scroll(xoffset, yoffset);
+    renderer->input.scroll_xoffset = static_cast<float>(xoffset);
+    renderer->input.scroll_yoffset = static_cast<float>(yoffset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

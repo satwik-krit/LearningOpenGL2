@@ -87,20 +87,9 @@ int main(void)
         last_frame = current_frame;
         camera.movement_speed = (10.0f * delta_time);
 
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        { glfwSetWindowShouldClose(window.glfw_window, GLFW_TRUE); }
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_W) == GLFW_PRESS)
-        { camera.position += camera.movement_speed * camera.front; }
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_S) == GLFW_PRESS)
-        { camera.position -= camera.movement_speed * camera.front; }
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_D) == GLFW_PRESS)
-        { camera.position += glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_A) == GLFW_PRESS)
-        { camera.position -= glm::normalize(glm::cross(camera.front, camera.up)) * camera.movement_speed; }
-        if (glfwGetKey(window.glfw_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        { camera.position = glm::vec3(0.0f, 0.0f, 3.0f); }
+        renderer.process_mouse_input();
+        renderer.process_keyboard_input();
 
-      
         view = camera.get_view_matrix();
         // TODO: Maintain a global screen width and height.
         int w,h;

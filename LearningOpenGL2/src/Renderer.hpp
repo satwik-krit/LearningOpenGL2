@@ -34,4 +34,6 @@ private:
 public:
     Renderer(renderer_config config);
     bool init();
+    void process_mouse_input();
+    void process_keyboard_input();
 };
